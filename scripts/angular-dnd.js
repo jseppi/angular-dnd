@@ -6,12 +6,6 @@ ngdnd = angular.module('ngDnd', []);
 ngdnd.directive('dndDraggable', function($parse) {
   return {
     restrict: 'A',
-    scope: {
-      dndDraggable: '@',
-      dndContentType: '@',
-      dndDragstart: '@',
-      dndEffect: '@'
-    },
     link: function(scope, element, attrs) {
       element.attr('draggable', true);
       element.bind('dragstart', function(e) {
@@ -22,7 +16,7 @@ ngdnd.directive('dndDraggable', function($parse) {
         dt.effectAllowed = attrs.dndEffect != null ? attrs.dndEffect : 'copy';
         getter = $parse(attrs.dndDraggable);
         dragModel = getter(scope);
-        dt.setData("application/" + scope.dndContentType, angular.toJson(dragModel));
+        dt.setData("application/" + attrs.dndContentType, angular.toJson(dragModel));
         if (attrs.dndDragstart != null) {
           fn = $parse(attrs.dndDragstart);
           scope.$apply(function() {
@@ -39,16 +33,12 @@ ngdnd.directive('dndDraggable', function($parse) {
 ngdnd.directive('dndDropzone', function($parse) {
   return {
     restrict: 'A',
-    scope: {
-      dndContentType: '@',
-      dndDrop: '@'
-    },
     link: function(scope, element, attrs) {
       element.bind('dragover', function(e) {
         var dt, _ref;
 
         dt = e.originalEvent != null ? e.originalEvent.dataTransfer : e.dataTransfer;
-        if (_ref = "application/" + scope.dndContentType, __indexOf.call(dt.types, _ref) < 0) {
+        if (_ref = "application/" + attrs.dndContentType, __indexOf.call(dt.types, _ref) < 0) {
           return;
         }
         if (e.preventDefault) {
@@ -59,34 +49,34 @@ ngdnd.directive('dndDropzone', function($parse) {
         var dt, _ref;
 
         dt = e.originalEvent != null ? e.originalEvent.dataTransfer : e.dataTransfer;
-        if (_ref = "application/" + scope.dndContentType, __indexOf.call(dt.types, _ref) < 0) {
+        if (_ref = "application/" + attrs.dndContentType, __indexOf.call(dt.types, _ref) < 0) {
           return;
         }
         if (e.preventDefault) {
           e.preventDefault();
         }
-        element.addClass('layer-drag-over');
+        element.addClass('drag-over');
       });
       element.bind('dragleave', function(e) {
         var dt, _ref;
 
         dt = e.originalEvent != null ? e.originalEvent.dataTransfer : e.dataTransfer;
-        if (_ref = "application/" + scope.dndContentType, __indexOf.call(dt.types, _ref) < 0) {
+        if (_ref = "application/" + attrs.dndContentType, __indexOf.call(dt.types, _ref) < 0) {
           return;
         }
-        element.removeClass('layer-drag-over');
+        element.removeClass('drag-over');
       });
       element.bind('drop', function(e) {
         var dropData, dt, fn, _ref;
 
         dt = e.originalEvent != null ? e.originalEvent.dataTransfer : e.dataTransfer;
-        if (_ref = "application/" + scope.dndContentType, __indexOf.call(dt.types, _ref) < 0) {
+        if (_ref = "application/" + attrs.dndContentType, __indexOf.call(dt.types, _ref) < 0) {
           return;
         }
         if (e.stopPropagation) {
           e.stopPropagation();
         }
-        dropData = dt.getData("application/" + scope.dndContentType);
+        dropData = dt.getData("application/" + attrs.dndContentType);
         dropData = angular.fromJson(dropData);
         if (attrs.dndDrop != null) {
           fn = $parse(attrs.dndDrop);

@@ -3,14 +3,14 @@ ngdnd = angular.module 'ngDnd', []
 
 #TODO: Maybe don't assume that it is an object being DnD'd, so don't always use to/fromJson
 
+# dndDraggable - model to attach to drag event
+# dndContentType - type name to use in content encoding string
+# dndDragstart - optional, callback for dragstart
+# dndEffect - optional, draganddrop effectAllowed (defaults to 'copy')
 ngdnd.directive 'dndDraggable', ($parse) ->
     return {
         restrict: 'A'
-        scope:
-            dndDraggable: '@' #model to attach to drag event
-            dndContentType: '@' #type name to use in content encoding string
-            dndDragstart: '@' #optional, callback for dragstart
-            dndEffect: '@' #optional, draganddrop effectAllowed (defaults to 'copy')
+        
         link: (scope, element, attrs) ->
             element.attr('draggable', true)
             
@@ -25,7 +25,7 @@ ngdnd.directive 'dndDraggable', ($parse) ->
                 dragModel = getter(scope)
 
                 dt.setData(
-                    "application/#{scope.dndContentType}", 
+                    "application/#{attrs.dndContentType}", 
                     angular.toJson(dragModel)
                 )
 
@@ -41,17 +41,17 @@ ngdnd.directive 'dndDraggable', ($parse) ->
             return
     }
 
+# dndContentType - type name to use in content encoding string
+# dndDrop - callback for drop event. Dropped object available as $dropped
 ngdnd.directive 'dndDropzone', ($parse) ->
     return {
         restrict: 'A'
-        scope:
-            dndContentType: '@' #type name to use in content encoding string
-            dndDrop: '@' #callback for drop event. Dropped object available as $dropped
+            
         link: (scope, element, attrs) ->
             element.bind('dragover', (e) ->
                 dt = if e.originalEvent? then e.originalEvent.dataTransfer else e.dataTransfer
 
-                unless "application/#{scope.dndContentType}" in dt.types
+                unless "application/#{attrs.dndContentType}" in dt.types
                     return
 
                 e.preventDefault() if e.preventDefault
@@ -61,32 +61,32 @@ ngdnd.directive 'dndDropzone', ($parse) ->
             element.bind('dragenter', (e) ->
                 dt = if e.originalEvent? then e.originalEvent.dataTransfer else e.dataTransfer 
                 
-                unless "application/#{scope.dndContentType}" in dt.types
+                unless "application/#{attrs.dndContentType}" in dt.types
                     return
                 e.preventDefault() if e.preventDefault
-                element.addClass('layer-drag-over')
+                element.addClass('drag-over')
                 return
             )
 
             element.bind('dragleave', (e) ->
                 dt = if e.originalEvent? then e.originalEvent.dataTransfer else e.dataTransfer 
                 
-                unless "application/#{scope.dndContentType}" in dt.types
+                unless "application/#{attrs.dndContentType}" in dt.types
                     return
 
-                element.removeClass('layer-drag-over')
+                element.removeClass('drag-over')
                 return
             )
 
             element.bind('drop', (e) ->
                 dt = if e.originalEvent? then e.originalEvent.dataTransfer else e.dataTransfer 
                 
-                unless "application/#{scope.dndContentType}" in dt.types
+                unless "application/#{attrs.dndContentType}" in dt.types
                     return
 
                 e.stopPropagation() if e.stopPropagation
                 dropData =  dt.getData(
-                    "application/#{scope.dndContentType}")
+                    "application/#{attrs.dndContentType}")
                 dropData = angular.fromJson(dropData)
                 
                 #callback to onDrop handler in directive
