@@ -9,8 +9,14 @@ ngdnd.directive('dndDraggable', function($parse) {
     link: function(scope, element, attrs) {
       element.attr('draggable', true);
       element.bind('dragstart', function(e) {
-        var dragModel, dt, fn, getter;
+        var canDrag, dragModel, dt, fn, getter;
 
+        if (attrs.dndCanDrag != null) {
+          canDrag = $parse(attrs.dndCanDrag)(scope);
+          if (!canDrag) {
+            return;
+          }
+        }
         element.addClass('dragging');
         dt = e.originalEvent != null ? e.originalEvent.dataTransfer : e.dataTransfer;
         dt.effectAllowed = attrs.dndEffect != null ? attrs.dndEffect : 'copy';
@@ -38,7 +44,7 @@ ngdnd.directive('dndDropzone', function($parse) {
         var dt, _ref;
 
         dt = e.originalEvent != null ? e.originalEvent.dataTransfer : e.dataTransfer;
-        if (_ref = "application/" + attrs.dndContentType, __indexOf.call(dt.types, _ref) < 0) {
+        if (!((dt.types != null) && (_ref = "application/" + attrs.dndContentType, __indexOf.call(dt.types, _ref) >= 0))) {
           return;
         }
         if (e.preventDefault) {
@@ -49,7 +55,7 @@ ngdnd.directive('dndDropzone', function($parse) {
         var dt, _ref;
 
         dt = e.originalEvent != null ? e.originalEvent.dataTransfer : e.dataTransfer;
-        if (_ref = "application/" + attrs.dndContentType, __indexOf.call(dt.types, _ref) < 0) {
+        if (!((dt.types != null) && (_ref = "application/" + attrs.dndContentType, __indexOf.call(dt.types, _ref) >= 0))) {
           return;
         }
         if (e.preventDefault) {
@@ -61,7 +67,7 @@ ngdnd.directive('dndDropzone', function($parse) {
         var dt, _ref;
 
         dt = e.originalEvent != null ? e.originalEvent.dataTransfer : e.dataTransfer;
-        if (_ref = "application/" + attrs.dndContentType, __indexOf.call(dt.types, _ref) < 0) {
+        if (!((dt.types != null) && (_ref = "application/" + attrs.dndContentType, __indexOf.call(dt.types, _ref) >= 0))) {
           return;
         }
         element.removeClass('drag-over');
@@ -70,7 +76,7 @@ ngdnd.directive('dndDropzone', function($parse) {
         var dropData, dt, fn, _ref;
 
         dt = e.originalEvent != null ? e.originalEvent.dataTransfer : e.dataTransfer;
-        if (_ref = "application/" + attrs.dndContentType, __indexOf.call(dt.types, _ref) < 0) {
+        if (!((dt.types != null) && (_ref = "application/" + attrs.dndContentType, __indexOf.call(dt.types, _ref) >= 0))) {
           return;
         }
         if (e.stopPropagation) {
