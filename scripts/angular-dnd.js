@@ -7,16 +7,18 @@ ngdnd.directive('dndDraggable', function($parse) {
   return {
     restrict: 'A',
     link: function(scope, element, attrs) {
+      var canDrag;
+
+      if (attrs.dndCanDrag != null) {
+        canDrag = $parse(attrs.dndCanDrag)(scope);
+        if (!canDrag) {
+          return;
+        }
+      }
       element.attr('draggable', true);
       element.bind('dragstart', function(e) {
-        var canDrag, dragModel, dt, fn, getter;
+        var dragModel, dt, fn, getter;
 
-        if (attrs.dndCanDrag != null) {
-          canDrag = $parse(attrs.dndCanDrag)(scope);
-          if (!canDrag) {
-            return;
-          }
-        }
         element.addClass('dragging');
         dt = e.originalEvent != null ? e.originalEvent.dataTransfer : e.dataTransfer;
         dt.effectAllowed = attrs.dndEffect != null ? attrs.dndEffect : 'copy';

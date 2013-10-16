@@ -13,13 +13,14 @@ ngdnd.directive 'dndDraggable', ($parse) ->
         restrict: 'A'
 
         link: (scope, element, attrs) ->
+
+            if attrs.dndCanDrag?
+                canDrag = $parse(attrs.dndCanDrag)(scope)
+                return if !canDrag
+
             element.attr('draggable', true)
 
             element.bind('dragstart', (e) ->
-
-                if attrs.dndCanDrag?
-                    canDrag = $parse(attrs.dndCanDrag)(scope)
-                    return if !canDrag
 
                 element.addClass('dragging')
 
